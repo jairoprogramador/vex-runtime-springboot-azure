@@ -7,7 +7,7 @@ ARG MAVEN_VERSION="3.9.12"
 ARG TERRAFORM_VERSION="1.13.3"
 ARG KUBECTL_VERSION="1.34.1"
 ARG KUBELOGIN_VERSION="0.2.12"
-ARG VEX_VERSION="1.0.15"
+ARG VEX_VERSION="1.0.20"
 ARG TARGETARCH
 
 RUN apt-get update && \
@@ -38,13 +38,13 @@ RUN curl -fsSL "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGET
     echo "$(cat /tmp/kubectl.sha256)  /opt/bin/kubectl" | sha256sum --check && \
     chmod +x /opt/bin/kubectl
 
-RUN curl -fsSL "https://github.com/jairoprogramador/vex/releases/download/v${VEX_VERSION}/vexc_linux_${TARGETARCH}.tar.gz" -o /tmp/vexc.tar.gz && \
-    curl -fsSL "https://github.com/jairoprogramador/vex/releases/download/v${VEX_VERSION}/vexc_${VEX_VERSION}_checksums.txt" -o /tmp/vexc.sha256 && \
-    grep "vexc_linux_${TARGETARCH}.tar.gz" /tmp/vexc.sha256 | sed "s|vexc_linux_${TARGETARCH}.tar.gz|/tmp/vexc.tar.gz|" | sha256sum --check && \
-    mkdir -p /tmp/vexc && \
-    tar -xzf /tmp/vexc.tar.gz -C /tmp/vexc && \
-    mv /tmp/vexc/vexc /opt/bin/ && \
-    chmod 755 /opt/bin/vexc
+RUN curl -fsSL "https://github.com/jairoprogramador/vex-engine/releases/download/v${VEX_VERSION}/vexd_linux_${TARGETARCH}.tar.gz" -o /tmp/vexd.tar.gz && \
+    curl -fsSL "https://github.com/jairoprogramador/vex-engine/releases/download/v${VEX_VERSION}/vexd_${VEX_VERSION}_checksums.txt" -o /tmp/vexd.sha256 && \
+    grep "vexd_linux_${TARGETARCH}.tar.gz" /tmp/vexd.sha256 | sed "s|vexd_linux_${TARGETARCH}.tar.gz|/tmp/vexd.tar.gz|" | sha256sum --check && \
+    mkdir -p /tmp/vexd && \
+    tar -xzf /tmp/vexd.tar.gz -C /tmp/vexd && \
+    mv /tmp/vexd/vexd /opt/bin/ && \
+    chmod 755 /opt/bin/vexd
 
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc -o /opt/microsoft.asc
 
@@ -82,7 +82,7 @@ COPY --from=downloader /opt/maven /usr/share/maven
 COPY --from=downloader /opt/bin/terraform   /usr/local/bin/
 COPY --from=downloader /opt/bin/kubectl     /usr/local/bin/
 COPY --from=downloader /opt/bin/kubelogin   /usr/local/bin/
-COPY --from=downloader /opt/bin/vexc        /usr/local/bin/
+COPY --from=downloader /opt/bin/vexd        /usr/local/bin/
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
 ENV MAVEN_HOME=/usr/share/maven
@@ -94,6 +94,4 @@ RUN git config --global --add safe.directory '*'
 
 WORKDIR /home/vex/app
 
-ENTRYPOINT [ "vexc" ]
-
-CMD ["--version"]
+ENTRYPOINT [ "vexd", "run" ]
