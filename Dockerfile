@@ -87,6 +87,8 @@ COPY --from=downloader /opt/bin/vexd        /usr/local/bin/
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
 ENV MAVEN_HOME=/usr/share/maven
 ENV PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
+ENV MAVEN_OPTS="-XX:MaxRAMPercentage=50 -XX:+ExitOnOutOfMemoryError"
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=50 -XX:+ExitOnOutOfMemoryError"
     
 USER vex
 
