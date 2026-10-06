@@ -89,11 +89,18 @@ ENV MAVEN_HOME=/usr/share/maven
 ENV PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
 ENV MAVEN_OPTS="-XX:MaxRAMPercentage=50 -XX:+ExitOnOutOfMemoryError"
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=50 -XX:+ExitOnOutOfMemoryError"
-    
+
+ENV VEX_ALMACEN=/vex/almacen
+ENV VEX_ESPACIO=/vex/espacio
+ENV VEX_MATERIAL=/vex/material
+
+RUN mkdir -p "$VEX_ALMACEN" "$VEX_ESPACIO" "$VEX_MATERIAL" && \
+    chown -R vex:vex /vex
+
 USER vex
 
 RUN git config --global --add safe.directory '*'
 
 WORKDIR /home/vex/app
 
-ENTRYPOINT [ "vexd", "run" ]
+ENTRYPOINT [ "vexd" ]
